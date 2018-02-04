@@ -1,12 +1,17 @@
-let express = require('express');
-let app = express();
-let port = 7000;
-let hits = 1;
+var express = require('express');   // express server
+var app = express();                // init express
 
-app.get('/', function(req, res)
-{
-    res.send("The server is working and your hit number is " + hits + "\n");
-    hits = hits + 1;
+let users = require('./routes/route_user.js'); // user route
+
+// defines the root route for the server end api
+let apiRoot = "/api/v1/";  
+
+// calls register function in route_user.js to register the other URL routes
+users.register(app, apiRoot + "users/");
+
+app.get(apiRoot, function(req, res) {
+	res.send('Hello world!');	
 });
 
-app.listen(7000);
+let server = app.listen(8123);
+console.log("listening");
