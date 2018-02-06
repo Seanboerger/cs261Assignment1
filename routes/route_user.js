@@ -136,12 +136,20 @@ function authenticateUser(userID, sessionID, sessionToken)
     console.log("User ID: " + userID);
     console.log("Session ID: " + sessionID);
     console.log("Session Token: " + sessionToken);
-    console.log("From " + sessions.length + " Total Sessions\n");
+    console.log("From " + sessions.length + " Total Sessions");
 
     for (let i = 0; i < sessions.length; i++)
     {
-        if (sessions[i].userID == userID && sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
-            return true;
+        if (sessions[i].userID == userID)
+        {
+            console.log("Found User ID! ID: " + userID + " with Session ID: " + sessions[i].sessionID);
+            
+            if (sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
+            {
+                console.log("Authentication Successful!");
+                return true;
+            }
+        }
     }
 
     return false;
