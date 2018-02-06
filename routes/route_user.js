@@ -210,7 +210,7 @@ module.exports.register = function (app, root)
 {
     app.post(root + 'create', createUser);
     app.get (root + 'login',  loginUser);
-    app.get (root + 'get',  getUser);
-    app.get (root + 'find',  getUser);
-    app.post (root + 'update',  getUser);
+    app.get (root + ':id/get',  getUser);
+    app.get (root + 'find/:username',  getUser);
+    app.post (root + ':id/update',  getUser);
 }
