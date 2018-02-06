@@ -223,6 +223,6 @@ module.exports.register = function (app, root)
     app.post(root + 'create', createUser);
     app.get (root + 'login',  loginUser);
     app.get (root + ':id/get',  getUser);
-    app.get (root + 'find/:username',  getUser);
-    app.get (root + ':id/update',  getUser);
+    app.get (root + 'find/:username',  findUser);
+    app.get (root + ':id/update',  updateUser);
 }
