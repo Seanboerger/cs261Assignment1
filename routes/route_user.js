@@ -50,6 +50,10 @@ function createUser(req, res, next)
         }
     }   
 
+    console.log("id is " + newUser.id);
+    console.log("username is " + tempUsername);
+    console.log(JSON.stringify(retVal))
+
     res.send(JSON.stringify(retVal));
 }
 
