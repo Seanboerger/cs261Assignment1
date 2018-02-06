@@ -36,9 +36,10 @@ function createUser(req, res, next)
     newUser.username = tempUsername;
     newUser.id = id++;
     newUser.password = req.query.password;
-    newUser.avatar = req.qeury.avatar;
-    if (newUser.avatar == undefined)
+    if (req.qeury.avatar == undefined)
         newUser.avatar = "default image";
+    else
+        newUser.avatar = req.qeury.avatar;
 
     users.push(newUser);
 
