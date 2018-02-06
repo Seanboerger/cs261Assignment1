@@ -44,7 +44,8 @@ function createUser(req, res, next)
     let newUser = {};
 
     newUser.username = tempUsername;
-    newUser.id = ++id;
+    newUser.id = id;
+    id += 1;
     newUser.password = tempPassword;
     if (tempAvatar == undefined)
         newUser.avatar = "default image";
@@ -101,6 +102,7 @@ function loginUser(req, res, next)
 
                 console.log("Created session for user ID: " + users[i].id + '\n');
                 console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
+                console.log("Active Sessions: " + sessions.length);
 
                 let retVal = 
                 {
