@@ -1,5 +1,7 @@
 var express = require('express');   // express server
 var app = express();                // init express
+const bodyParser = require('body-parser');
+app.use(bodyParser.json())
 
 let users = require('./routes/route_user.js'); // user route
 

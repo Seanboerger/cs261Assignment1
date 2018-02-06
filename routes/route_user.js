@@ -131,7 +131,8 @@ function authenticateUser(userID, sessionID, sessionToken)
 
 function getUser(req, res, next) 
 {
-    if (!authenticateUser(req.query.id, req.query._session, req.query._token))
+    let tempID = req.body.id || req.query.id || req.params.id;
+    if (!authenticateUser(tempID, req.query._session, req.query._token))
     {
         let retVal = 
         {
