@@ -169,10 +169,11 @@ function getUser(req, res, next)
 
 function findUser(req, res, next) 
 {
-    let id = "";
+    let tempUsername = req.body.username || req.query.username || req.params.username;    
+    let id = -1;
     for (let i = 0; i < users.length; i++)
     {
-        if (users[i].username == req.query.username)
+        if (users[i].username == tempUsername)
         {
             id = users[i].id;
         }
@@ -183,7 +184,7 @@ function findUser(req, res, next)
         let retVal = 
         {
             'status' : 'failure',
-            'reason' : 'Failed to validate id/session/token'
+            'reason' : 'Failed to validate username/session/token'
         }   
     
         res.send(JSON.stringify(retVal));
@@ -192,7 +193,7 @@ function findUser(req, res, next)
 
     for (let i = 0; i < users.length; i++)
     {
-        if (users[i].username == req.query.username)
+        if (users[i].username == tempUsername)
         {
             let retVal = 
             {
@@ -223,5 +224,5 @@ module.exports.register = function (app, root)
     app.get (root + 'login',  loginUser);
     app.get (root + ':id/get',  getUser);
     app.get (root + 'find/:username',  getUser);
-    app.post (root + ':id/update',  getUser);
+    app.get (root + ':id/update',  getUser);
 }
