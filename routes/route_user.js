@@ -27,6 +27,7 @@ function createUser(req, res, next)
                 }   
             
                 res.send(JSON.stringify(retVal));
+                return;
             }
         }
     }
