@@ -3,13 +3,14 @@ var app = express();                // init express
 
 let users = require('./routes/route_user.js'); // user route
 
-// defines the root route for the server end api
+// defines the root route f5or the server end api
 let apiRoot = "/api/v1/";  
 
 // calls register function in route_user.js to register the other URL routes
 users.register(app, apiRoot + "users/");
 
-app.get(apiRoot, function(req, res) {
+app.get(apiRoot, function(req, res) 
+{
 	res.send('Hello world!');	
 });
 
