@@ -12,13 +12,15 @@ function createUser(req, res, next)
         {
             if (users[i].username == tempUsername)
             {
+                console.log("attempted username: " + tempUsername + "\n");
+                console.log("conflicted username: " + users[i].username + "\n");
+
                 let retVal = 
                 {
                     'status' : 'failure',
                     'data' : 
                     {
-                           'username attempted' : tempUsername,
-                           'username found' : users[i].username
+                           'username' : 'Already taken',
                     }
                 }   
             
