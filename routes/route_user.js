@@ -140,7 +140,7 @@ function authenticateUser(userID, sessionID, sessionToken)
 
     for (let i = 0; i < sessions.length; i++)
     {
-        if (sessions[i].userID == userID)
+        if (sessions[i].userID === userID)
         {
             console.log("Found User ID! ID: " + userID + " with Session ID: " + sessions[i].sessionID);
             
