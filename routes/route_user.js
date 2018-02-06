@@ -17,9 +17,6 @@ function createUser(req, res, next)
                     'status' : 'failure',
                     'data' : 
                     {
-                           'username' : 'Already taken',
-                           'size of users' : users.length,
-                           'value of i' : i,
                            'username attempted' : tempUsername,
                            'username found' : users[i].username
                     }
