@@ -12,6 +12,7 @@ function createUser(req, res, next)
         {
             if (users[i].username == tempUsername)
             {
+                console.log("Username conflict: " + users[i].username);
                 let retVal = 
                 {
                     'status' : 'failure',
