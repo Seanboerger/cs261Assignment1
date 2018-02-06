@@ -12,7 +12,7 @@ function createUser(req, res, next)
     {
         let retVal = 
         {
-            'status' : 'failure',
+            'status' : 'fail',
             'reason' : "Username/Password undefined"
         }  
         res.send(JSON.stringify(retVal));
@@ -27,7 +27,7 @@ function createUser(req, res, next)
             {
                 let retVal = 
                 {
-                    'status' : 'failure',
+                    'status' : 'fail',
                     'reason' : 
                     {
                            'username' : 'Already taken',
@@ -122,7 +122,7 @@ function loginUser(req, res, next)
 
     let retVal = 
     {
-        'status' : 'failure',
+        'status' : 'fail',
         'reason' : 'Username/password mismatch',
     }   
 
@@ -153,7 +153,7 @@ function getUser(req, res, next)
     {
         let retVal = 
         {
-            'status' : 'failure',
+            'status' : 'fail',
             'reason' : 'Failed to validate id/session/token'
         }   
     
@@ -198,7 +198,7 @@ function findUser(req, res, next)
     {
         let retVal = 
         {
-            'status' : 'failure',
+            'status' : 'fail',
             'reason' : 'Failed to validate username/session/token'
         }   
     
@@ -234,7 +234,7 @@ function updateUser(req, res, next)
     {
         let retVal = 
         {
-            'status' : 'failure',
+            'status' : 'fail',
             'reason' : { 'id' : "Forbidden" }
         }   
     
@@ -262,7 +262,7 @@ function updateUser(req, res, next)
                 {
                     let failRetVal = 
                     {
-                        'status' : 'failure',
+                        'status' : 'fail',
                         'reason' : { 'oldPassword' : "Forbidden" }
                     }   
                     res.send(JSON.stringify(failRetVal));
