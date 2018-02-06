@@ -5,7 +5,19 @@ let id = 0;
 // creating a user account
 function createUser(req, res, next) 
 {
-    let tempUsername = req.query.username;
+    let tempUsername = req.body.username || req.query.username || req.params.username;
+    let tempPassword = req.body.password || req.query.password || req.params.password;
+
+    if (tempUsername == undefined || tempPassword == undefined)
+    {
+        let retVal = 
+        {
+            'status' : 'failure',
+            'reason' : "Username/Password undefined"
+        }  
+        res.send(JSON.stringify(retVal));
+        return;
+    }
 
     if (users.length > 0)
     {
@@ -32,7 +44,7 @@ function createUser(req, res, next)
 
     newUser.username = tempUsername;
     newUser.id = id++;
-    newUser.password = req.query.password;
+    newUser.password = tempPassword;
     if (req.query.avatar == undefined)
         newUser.avatar = "default image";
     else
