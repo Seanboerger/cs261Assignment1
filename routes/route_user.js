@@ -165,6 +165,10 @@ function getUser(req, res, next)
 
     if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
     {
+        console.log("***********************")
+        console.log("Failing to authenticate with id: " + tempID);
+        console.log("Active Sessions: " + sessions.length);        
+
         let retVal = 
         {
             'status' : 'fail',
@@ -213,6 +217,10 @@ function findUser(req, res, next)
 
     if (!authenticateUser(id, tempSessionID, tempSessionToken))
     {
+        console.log("***********************")
+        console.log("Failing to authenticate with username: " + tempUsername);
+        console.log("Active Sessions: " + sessions.length);
+
         let retVal = 
         {
             'status' : 'fail',
