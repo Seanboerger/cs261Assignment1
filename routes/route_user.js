@@ -119,9 +119,11 @@ function authenticateUser(userID, sessionID, sessionToken)
     console.log("User ID: " + userID + '\n');
     console.log("Session ID: " + sessionID + '\n');
     console.log("Session Token: " + sessionToken + '\n');
+    console.log("From " + sessions.length + " Total Sessions\n");
 
     for (let i = 0; i < sessions.length; i++)
     {
+        console.log("Value of i in auth look: " + i + "\n");
         if (sessions[i].userID == userID && sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
             return true;
     }
@@ -146,7 +148,7 @@ function getUser(req, res, next)
 
     for (let i = 0; i < users.length; i++)
     {
-        if (users[i].id == req.query.id)
+        if (users[i].id == tempID)
         {
             let retVal = 
             {
