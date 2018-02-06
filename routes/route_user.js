@@ -6,7 +6,7 @@ function createUser(req, res, next)
 {
     let tempUsername = req.query.username;
 
-    console.log("Requested Username: " + req.query.username);
+    //console.log("Requested Username: " + req.query.username);
 
     if (users.length > 0)
     {
@@ -14,8 +14,8 @@ function createUser(req, res, next)
         {
             if (users[i].username == tempUsername)
             {
-                console.log("attempted username: " + tempUsername + "\n");
-                console.log("conflicted username: " + users[i].username + "\n");
+                //console.log("attempted username: " + tempUsername + "\n");
+                //console.log("conflicted username: " + users[i].username + "\n");
 
                 let retVal = 
                 {
