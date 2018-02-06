@@ -170,8 +170,9 @@ function getUser(req, res, next)
         for (let i = 0; i < sessions.length; i++)
         {
             console.log("Session Number: " + i);  
-            console.log("Session ID: " + tempSessionID);           
-            console.log("Session Token: " + tempSessionToken);        
+            console.log("Session UserID: " + sessions[i].userID);           
+            console.log("Session ID: " + sessions[i].sessionID);           
+            console.log("Session Token: " + sessions[i].sessionToken);        
         }      
 
         console.log("***********************\n")        
