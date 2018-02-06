@@ -7,6 +7,7 @@ function createUser(req, res, next)
 {
     let tempUsername = req.body.username || req.query.username || req.params.username;
     let tempPassword = req.body.password || req.query.password || req.params.password;
+    let tempAvatar = req.body.avatar || req.query.avatar || req.params.avatar;
 
     if (tempUsername == undefined || tempPassword == undefined)
     {
@@ -45,10 +46,10 @@ function createUser(req, res, next)
     newUser.username = tempUsername;
     newUser.id = id++;
     newUser.password = tempPassword;
-    if (req.query.avatar == undefined)
+    if (tempAvatar == undefined)
         newUser.avatar = "default image";
     else
-        newUser.avatar = req.query.avatar;
+        newUser.avatar = tempAvatar;
 
     users.push(newUser);
 
@@ -149,7 +150,10 @@ function authenticateUser(userID, sessionID, sessionToken)
 function getUser(req, res, next) 
 {
     let tempID = req.body.id || req.query.id || req.params.id;
-    if (!authenticateUser(tempID, req.query._session, req.query._token))
+    let tempSessionID = req.body._session || req.query._session || req.params._session;
+    let tempSessionToken = req.body._token || req.query._token || req.params._token;
+
+    if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
     {
         let retVal = 
         {
@@ -185,6 +189,9 @@ function getUser(req, res, next)
 function findUser(req, res, next) 
 {
     let tempUsername = req.body.username || req.query.username || req.params.username;    
+    let tempSessionID = req.body._session || req.query._session || req.params._session;
+    let tempSessionToken = req.body._token || req.query._token || req.params._token;
+
     let id = -1;
     for (let i = 0; i < users.length; i++)
     {
@@ -194,7 +201,7 @@ function findUser(req, res, next)
         }
     }
 
-    if (!authenticateUser(id, req.query._session, req.query._token))
+    if (!authenticateUser(id, tempSessionID, tempSessionToken))
     {
         let retVal = 
         {
@@ -229,8 +236,10 @@ function findUser(req, res, next)
 function updateUser(req, res, next) 
 {
     let tempID = req.body.id || req.query.id || req.params.id;
+    let tempSessionID = req.body._session || req.query._session || req.params._session;
+    let tempSessionToken = req.body._token || req.query._token || req.params._token;
 
-    if (!authenticateUser(tempID, req.query._session, req.query._token))
+    if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
     {
         let retVal = 
         {
@@ -242,9 +251,9 @@ function updateUser(req, res, next)
         return;
     }
 
-    let oldPass = req.query.oldPassword;
-    let newPass = req.query.newPassword;
-    let newAvatar = req.query.avatar;
+    let oldPass = req.body.oldPassword || req.query.oldPassword || req.params.oldPassword;
+    let newPass = req.body.newPassword || req.query.newPassword || req.params.newPassword;
+    let newAvatar = req.body.avatar || req.query.avatar || req.params.avatar;
     let retVal = { 'status' : 'success', 'data' : {} };
 
     for (let i = 0; i < users.length; i++)
