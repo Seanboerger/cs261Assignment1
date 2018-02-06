@@ -82,6 +82,9 @@ function loginUser(req, res, next)
                 newSession.sessionToken = sessionToken;
                 sessions.push(newSession);
 
+                console.log("Created session for user ID: " + users[i].id + '\n');
+                console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
+
                 let retVal = 
                 {
                     'status' : 'success',
@@ -112,6 +115,11 @@ function loginUser(req, res, next)
 
 function authenticateUser(userID, sessionID, sessionToken)
 {
+    console.log("\nAttempting to authenticate\n");
+    console.log("User ID: " + userID + '\n');
+    console.log("Session ID: " + sessionID + '\n');
+    console.log("Session Token: " + sessionToken + '\n');
+
     for (let i = 0; i < sessions.length; i++)
     {
         if (sessions[i].userID == userID && sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
