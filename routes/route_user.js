@@ -16,7 +16,7 @@ function createUser(req, res, next)
                 let retVal = 
                 {
                     'status' : 'failure',
-                    'data' : 
+                    'reason' : 
                     {
                            'username' : 'Already taken',
                     }
@@ -115,15 +115,14 @@ function loginUser(req, res, next)
 
 function authenticateUser(userID, sessionID, sessionToken)
 {
-    console.log("\nAttempting to authenticate\n");
-    console.log("User ID: " + userID + '\n');
-    console.log("Session ID: " + sessionID + '\n');
-    console.log("Session Token: " + sessionToken + '\n');
+    console.log("\nAttempting to authenticate");
+    console.log("User ID: " + userID);
+    console.log("Session ID: " + sessionID);
+    console.log("Session Token: " + sessionToken);
     console.log("From " + sessions.length + " Total Sessions\n");
 
     for (let i = 0; i < sessions.length; i++)
     {
-        console.log("Value of i in auth look: " + i + "\n");
         if (sessions[i].userID == userID && sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
             return true;
     }
@@ -213,7 +212,57 @@ function findUser(req, res, next)
 
 function updateUser(req, res, next) 
 {
-    res.send("Get User");
+    let tempID = req.body.id || req.query.id || req.params.id;
+
+    if (!authenticateUser(tempID, req.query._session, req.query._token))
+    {
+        let retVal = 
+        {
+            'status' : 'failure',
+            'reason' : { 'id' : "Forbidden" }
+        }   
+    
+        res.send(JSON.stringify(retVal));
+        return;
+    }
+
+    let oldPass = req.query.oldPassword;
+    let newPass = req.query.newPassword;
+    let newAvatar = req.query.avatar;
+    let retVal = { 'status' : 'success', 'data' : {} };
+
+    for (let i = 0; i < users.length; i++)
+    {
+        if (tempID == users[i].id)
+        {
+            if (oldPass != undefined && newPass != undefined)
+            {
+                if (oldPass == users[i].password)
+                {
+                    users[i].data.password = newPass;
+                    retVal.passwordChanged = true;
+                }
+                else
+                {
+                    let failRetVal = 
+                    {
+                        'status' : 'failure',
+                        'reason' : { 'oldPassword' : "Forbidden" }
+                    }   
+                    res.send(JSON.stringify(failRetVal));
+                    return;
+                }
+            }
+
+            if (newAvatar != undefined)
+            {
+                users[i].avatar = newAvatar;
+                retVal.data.avatar = newAvatar;
+            }
+        }
+    }
+
+    res.send(JSON.stringify(retVal));    
 }
 
 
@@ -224,5 +273,5 @@ module.exports.register = function (app, root)
     app.get (root + 'login',  loginUser);
     app.get (root + ':id/get',  getUser);
     app.get (root + 'find/:username',  findUser);
-    app.get (root + ':id/update',  updateUser);
+    app.post (root + ':id/update',  updateUser);
 }
