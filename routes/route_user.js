@@ -222,21 +222,21 @@ function findUser(req, res, next)
         }
     }
 
-    if (!authenticateUser(id, tempSessionID, tempSessionToken))
-    {
-        console.log("***********************")
-        console.log("Failing to authenticate with username: " + tempUsername);
-        console.log("Active Sessions: " + sessions.length);
-
-        let retVal = 
-        {
-            'status' : 'fail',
-            'reason' : 'Failed to validate username/session/token'
-        }   
-    
-        res.send(JSON.stringify(retVal));
-        return;
-    }
+    //if (!authenticateUser(id, tempSessionID, tempSessionToken))
+    //{
+    //    console.log("***********************")
+    //    console.log("Failing to authenticate with username: " + tempUsername);
+    //    console.log("Active Sessions: " + sessions.length);
+//
+    //    let retVal = 
+    //    {
+    //        'status' : 'fail',
+    //        'reason' : 'Failed to validate username/session/token'
+    //    }   
+    //
+    //    res.send(JSON.stringify(retVal));
+    //    return;
+    //}
 
     for (let i = 0; i < users.length; i++)
     {
