@@ -163,28 +163,28 @@ function getUser(req, res, next)
     let tempSessionID = req.body._session || req.query._session || req.params._session;
     let tempSessionToken = req.body._token || req.query._token || req.params._token;
 
-    if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
-    {
-        console.log("\n***********************")
-        console.log("Failing to authenticate with id: " + tempID);
-        for (let i = 0; i < sessions.length; i++)
-        {
-            console.log("Session Number: " + i);  
-            console.log("Session UserID: " + sessions[i].userID);           
-            console.log("Session ID: " + sessions[i].sessionID);           
-            console.log("Session Token: " + sessions[i].sessionToken);        
-        }      
-
-        console.log("***********************\n")        
-        let retVal = 
-        {
-            'status' : 'fail',
-            'reason' : 'Failed to validate id/session/token'
-        }   
-    
-        res.send(JSON.stringify(retVal));
-        return;
-    }
+    //if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
+    //{
+    //    console.log("\n***********************")
+    //    console.log("Failing to authenticate with id: " + tempID);
+    //    for (let i = 0; i < sessions.length; i++)
+    //    {
+    //        console.log("Session Number: " + i);  
+    //        console.log("Session UserID: " + sessions[i].userID);           
+    //        console.log("Session ID: " + sessions[i].sessionID);           
+    //        console.log("Session Token: " + sessions[i].sessionToken);        
+    //    }      
+//
+    //    console.log("***********************\n")        
+    //    let retVal = 
+    //    {
+    //        'status' : 'fail',
+    //        'reason' : 'Failed to validate id/session/token'
+    //    }   
+    //
+    //    res.send(JSON.stringify(retVal));
+    //    return;
+    //}
 
     for (let i = 0; i < users.length; i++)
     {
