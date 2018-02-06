@@ -239,8 +239,8 @@ function updateUser(req, res, next)
             {
                 if (oldPass == users[i].password)
                 {
-                    users[i].data.password = newPass;
-                    retVal.passwordChanged = true;
+                    users[i].password = newPass;
+                    retVal.data.passwordChanged = true;
                 }
                 else
                 {
