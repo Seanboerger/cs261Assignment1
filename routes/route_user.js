@@ -7,17 +7,12 @@ function createUser(req, res, next)
 {
     let tempUsername = req.query.username;
 
-    //console.log("Requested Username: " + req.query.username);
-
     if (users.length > 0)
     {
         for (let i = 0; i < users.length; i++) 
         {
             if (users[i].username == tempUsername)
             {
-                //console.log("attempted username: " + tempUsername + "\n");
-                //console.log("conflicted username: " + users[i].username + "\n");
-
                 let retVal = 
                 {
                     'status' : 'failure',
@@ -50,7 +45,7 @@ function createUser(req, res, next)
         'status' : 'success',
         'data' : 
         {
-               'id' : id,
+               'id' : newUser.id,
                'username' : tempUsername
         }
     }   
@@ -109,24 +104,99 @@ function loginUser(req, res, next)
     let retVal = 
     {
         'status' : 'failure',
-        'data' : 
-        {
-               'reason' : 'Username/password mismatch',
-        }
+        'reason' : 'Username/password mismatch',
     }   
 
     res.send(JSON.stringify(retVal));
 }
 
-// login user route
+function authenticateUser(userID, sessionID, sessionToken)
+{
+    for (let i = 0; i < sessions.length; i++)
+    {
+        if (sessions[i].userID == userID && sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
+            return true;
+    }
+
+    return false;
+}
+
 function getUser(req, res, next) 
 {
-    res.send("Get User");
+    if (!authenticateUser(req.query.id, req.query._session, req.query._token))
+    {
+        let retVal = 
+        {
+            'status' : 'failure',
+            'reason' : 'Failed to validate id/session/token'
+        }   
+    
+        res.send(JSON.stringify(retVal));
+        return;
+    }
+
+    for (let i = 0; i < users.length; i++)
+    {
+        if (users[i].id == req.query.id)
+        {
+            let retVal = 
+            {
+                'status' : 'success',
+                'data' : 
+                {
+                       'id' : users[i].id,
+                       'username' : users[i].username,
+                       'avatar' : users[i].avatar
+                }
+            }   
+        
+            res.send(JSON.stringify(retVal));
+            return;
+        }
+    }
 }
 
 function findUser(req, res, next) 
 {
-    res.send("Get User");
+    let id = "";
+    for (let i = 0; i < users.length; i++)
+    {
+        if (users[i].username == req.query.username)
+        {
+            id = users[i].id;
+        }
+    }
+
+    if (!authenticateUser(id, req.query._session, req.query._token))
+    {
+        let retVal = 
+        {
+            'status' : 'failure',
+            'reason' : 'Failed to validate id/session/token'
+        }   
+    
+        res.send(JSON.stringify(retVal));
+        return;
+    }
+
+    for (let i = 0; i < users.length; i++)
+    {
+        if (users[i].username == req.query.username)
+        {
+            let retVal = 
+            {
+                'status' : 'success',
+                'data' : 
+                {
+                       'id' : users[i].id,
+                       'username' : users[i].username
+                }
+            }   
+        
+            res.send(JSON.stringify(retVal));
+            return;
+        }
+    }
 }
 
 function updateUser(req, res, next) 
