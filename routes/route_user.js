@@ -6,6 +6,8 @@ function createUser(req, res, next)
 {
     let tempUsername = req.params.username;
 
+    console.log("Requested Username: " + req.params.username);
+
     if (users.length > 0)
     {
         for (let i = 0; i < users.length; i++) 
@@ -32,8 +34,7 @@ function createUser(req, res, next)
     let newUser = {};
 
     newUser.username = tempUsername;
-    newUser.id = id;
-    id++;
+    newUser.id = id++;
     newUser.password = req.params.password;
     newUser.avatar = req.params.avatar;
 
