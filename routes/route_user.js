@@ -165,10 +165,16 @@ function getUser(req, res, next)
 
     if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
     {
-        console.log("***********************")
+        console.log("\n***********************")
         console.log("Failing to authenticate with id: " + tempID);
-        console.log("Active Sessions: " + sessions.length);        
+        for (let i = 0; i < sessions.length; i++)
+        {
+            console.log("Session Number: " + i);  
+            console.log("Session ID: " + tempSessionID);           
+            console.log("Session Token: " + tempSessionToken);        
+        }      
 
+        console.log("***********************\n")        
         let retVal = 
         {
             'status' : 'fail',
