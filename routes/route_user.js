@@ -1,4 +1,5 @@
 let users = [];
+let sessions = [];
 let id = 0;
 
 // creating a user account
@@ -57,10 +58,64 @@ function createUser(req, res, next)
     res.send(JSON.stringify(retVal));
 }
 
+function makeid(length) 
+{
+    let text = "";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+    for (let i = 0; i < length; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
+}
+
 // login user route
 function loginUser(req, res, next) 
 {
-    res.send("Login");
+    for (let i = 0; i < users.length; i++) 
+    {
+        if (users[i].username == req.query.username)
+        {
+            if (users[i].password == req.query.password)
+            {
+                let sessionToken = makeid(10);
+                let sessionID = makeid(5);
+
+                let newSession = {};
+                newSession.userID = users[i].id;
+                newSession.sessionID = sessionID;
+                newSession.sessionToken = sessionToken;
+                sessions.push(newSession);
+
+                let retVal = 
+                {
+                    'status' : 'success',
+                    'data' : 
+                    {
+                           'id' : users[i].id,
+                           'session' : sessionID,
+                           'token' : sessionToken
+                    }
+                }   
+            
+                res.send(JSON.stringify(retVal));
+                return;
+            }
+            else
+                break;
+        }
+    }
+
+    let retVal = 
+    {
+        'status' : 'failure',
+        'data' : 
+        {
+               'reason' : 'Username/password mismatch',
+        }
+    }   
+
+    res.send(JSON.stringify(retVal));
 }
 
 // login user route
