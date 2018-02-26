@@ -321,7 +321,6 @@ function updateUser(req, res, next)
                         {
                             retVal.data.passwordChanged = true;
                             res.send(JSON.stringify(retVal));
-                            return;
                         });
                     }
                     else
@@ -351,12 +350,10 @@ function updateUser(req, res, next)
                         {
                             retVal.data.passwordChanged = false;
                             res.send(JSON.stringify(retVal));    
-                            return;
                         });
                     }
                 }
                 res.send(JSON.stringify(retVal)); 
-                return;
             });
         }
         else
@@ -368,8 +365,7 @@ function updateUser(req, res, next)
                 'reason' : { 'id' : "Forbidden" }
             }   
         
-            res.end();//send(JSON.stringify(retVal));
-            return;
+            res.send(JSON.stringify(retVal));
         }
     });
 }
