@@ -182,7 +182,7 @@ function getUser(req, res, next)
         if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
             // Get the user object from the user ID
-            db.getObject(reply.userID, (reply) => 
+            db.getObject(replySession.userID, (reply) => 
             {
                 if (reply != null)
                 {
