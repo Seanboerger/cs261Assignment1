@@ -1,5 +1,5 @@
-let users = [];
-let sessions = [];
+let db =  require('../utils/dbmanager');
+
 let id = 0;
 
 // creating a user account
@@ -20,55 +20,60 @@ function createUser(req, res, next)
         return;
     }
 
-    if (users.length > 0)
+    db.getObject(tempUsername, (reply) => 
     {
-        for (let i = 0; i < users.length; i++) 
+        if (reply != null)
         {
-            if (users[i].username == tempUsername)
+            let retVal = 
+            {
+                'status' : 'fail',
+                'reason' : 
+                {
+                       'username' : 'Already taken',
+                }
+            }   
+        
+            res.send(JSON.stringify(retVal));
+            return;
+        }
+
+        let newUser = {};
+
+        newUser.username = tempUsername;
+        newUser.id = id;
+        id += 1;
+        newUser.password = tempPassword;
+        if (tempAvatar == undefined)
+            newUser.avatar = "default image";
+        else
+            newUser.avatar = tempAvatar;
+
+        //////////////////////
+        // Redis Push new User
+        //////////////////////
+        db.storeObject(newUser.id, newUser, (reply) => 
+        {
+            let idObj = { 'id': newUser.id };
+            db.storeObject(newUser.username, idObj, (reply) => 
             {
                 let retVal = 
                 {
-                    'status' : 'fail',
-                    'reason' : 
+                    'status' : 'success',
+                    'data' : 
                     {
-                           'username' : 'Already taken',
+                           'id' : newUser.id,
+                           'username' : tempUsername
                     }
                 }   
             
+                console.log("id is " + newUser.id);
+                console.log("username is " + tempUsername);
+                console.log(JSON.stringify(retVal))
+            
                 res.send(JSON.stringify(retVal));
-                return;
-            }
-        }
-    }
-
-    let newUser = {};
-
-    newUser.username = tempUsername;
-    newUser.id = id;
-    id += 1;
-    newUser.password = tempPassword;
-    if (tempAvatar == undefined)
-        newUser.avatar = "default image";
-    else
-        newUser.avatar = tempAvatar;
-
-    users.push(newUser);
-
-    let retVal = 
-    {
-        'status' : 'success',
-        'data' : 
-        {
-               'id' : newUser.id,
-               'username' : tempUsername
-        }
-    }   
-
-    console.log("id is " + newUser.id);
-    console.log("username is " + tempUsername);
-    console.log(JSON.stringify(retVal))
-
-    res.send(JSON.stringify(retVal));
+            });
+        });
+    });
 }
 
 function makeid(length) 
@@ -85,51 +90,68 @@ function makeid(length)
 // login user route
 function loginUser(req, res, next) 
 {
-    for (let i = 0; i < users.length; i++) 
+    let tempUsername = req.body.username || req.query.username || req.params.username;
+    let tempPassword = req.body.password || req.query.password || req.params.password;
+
+    db.getObject(tempUsername, (reply) => 
     {
-        if (users[i].username == req.query.username)
+        if (reply != null)
         {
-            if (users[i].password == req.query.password)
+            db.getObject(reply.id, (reply) => 
             {
-                let sessionToken = makeid(10);
-                let sessionID = makeid(5);
-
-                let newSession = {};
-                newSession.userID = users[i].id;
-                newSession.sessionID = sessionID;
-                newSession.sessionToken = sessionToken;
-                sessions.push(newSession);
-
-                console.log("Created session for user ID: " + users[i].id + '\n');
-                console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
-                console.log("Active Sessions: " + sessions.length);
-
-                let retVal = 
+                if (reply.password == tempPassword)
                 {
-                    'status' : 'success',
-                    'data' : 
+                    let sessionToken = makeid(10);
+                    let sessionID = makeid(5);
+
+                    let newSession = {};
+                    newSession.userID = reply.id;
+                    newSession.sessionID = sessionID;
+                    newSession.sessionToken = sessionToken;
+                    
+                    db.storeObject(sessionID, newSession, (reply) => 
                     {
-                           'id' : users[i].id,
-                           'session' : sessionID,
-                           'token' : sessionToken
-                    }
-                }   
-            
-                res.send(JSON.stringify(retVal));
-                return;
-            }
-            else
-                break;
+                        console.log("Created session for user ID: " + reply.id + '\n');
+                        console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
+                        console.log("Active Sessions: " + sessions.length);
+        
+                        let retVal = 
+                        {
+                            'status' : 'success',
+                            'data' : 
+                            {
+                                   'id' : reply.id,
+                                   'session' : sessionID,
+                                   'token' : sessionToken
+                            }
+                        }
+
+                        res.send(JSON.stringify(retVal));
+                    });
+                }
+                else
+                {
+                    let retVal = 
+                    {
+                        'status' : 'fail',
+                        'reason' : 'Username/password mismatch',
+                    }   
+                
+                    res.send(JSON.stringify(retVal));
+                }
+            });
         }
-    }
-
-    let retVal = 
-    {
-        'status' : 'fail',
-        'reason' : 'Username/password mismatch',
-    }   
-
-    res.send(JSON.stringify(retVal));
+        else
+        {
+            let retVal = 
+            {
+                'status' : 'fail',
+                'reason' : 'Username/password mismatch',
+            }   
+        
+            res.send(JSON.stringify(retVal));
+        }
+    });
 }
 
 function authenticateUser(userID, sessionID, sessionToken)
@@ -163,48 +185,54 @@ function getUser(req, res, next)
     let tempSessionID = req.body._session || req.query._session || req.params._session;
     let tempSessionToken = req.body._token || req.query._token || req.params._token;
 
-    //if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
-    //{
-    //    console.log("\n***********************")
-    //    console.log("Failing to authenticate with id: " + tempID);
-    //    for (let i = 0; i < sessions.length; i++)
-    //    {
-    //        console.log("Session Number: " + i);  
-    //        console.log("Session UserID: " + sessions[i].userID);           
-    //        console.log("Session ID: " + sessions[i].sessionID);           
-    //        console.log("Session Token: " + sessions[i].sessionToken);        
-    //    }      
-//
-    //    console.log("***********************\n")        
-    //    let retVal = 
-    //    {
-    //        'status' : 'fail',
-    //        'reason' : 'Failed to validate id/session/token'
-    //    }   
-    //
-    //    res.send(JSON.stringify(retVal));
-    //    return;
-    //}
-
-    for (let i = 0; i < users.length; i++)
+    // Access the session, get the token, the userID back
+    db.getObject(tempSessionID, (reply) => 
     {
-        if (users[i].id == tempID)
+        // If the session exists, and the userID is correct, and the token is correct, continue
+        if (reply != null && tempID == reply.userID && reply.sessionToken == tempSessionToken)
+        {
+            // Get the user object from the user ID
+            db.getObject(reply.userID, (reply) => 
+            {
+                if (reply != null)
+                {
+                    let retVal = 
+                    {
+                        'status' : 'success',
+                        'data' : 
+                        {
+                               'id' : reply.id,
+                               'username' : reply.username,
+                               'avatar' : reply.avatar
+                        }
+                    }   
+                
+                    res.send(JSON.stringify(retVal));
+                    return;
+                }
+                else
+                {
+                    let retVal = 
+                    {
+                        'status' : 'fail',
+                        'reason' : 'User does not exist'
+                    }       
+                    res.send(JSON.stringify(retVal));
+                    return;
+                }
+            });
+        }
+        else
         {
             let retVal = 
             {
-                'status' : 'success',
-                'data' : 
-                {
-                       'id' : users[i].id,
-                       'username' : users[i].username,
-                       'avatar' : users[i].avatar
-                }
-            }   
-        
+                'status' : 'fail',
+                'reason' : 'Failed to validate id/session/token'
+            }       
             res.send(JSON.stringify(retVal));
             return;
         }
-    }
+    });
 }
 
 function findUser(req, res, next) 
@@ -213,49 +241,53 @@ function findUser(req, res, next)
     let tempSessionID = req.body._session || req.query._session || req.params._session;
     let tempSessionToken = req.body._token || req.query._token || req.params._token;
 
-    let id = -1;
-    for (let i = 0; i < users.length; i++)
+    // Access the session, get the token, the userID back
+    db.getObject(tempSessionID, (reply1) => 
     {
-        if (users[i].username == tempUsername)
+        // if session exists and token is correct
+        if (reply1 != null && reply1.sessionToken == tempSessionToken)
         {
-            id = users[i].id;
+            // Access the user id by the username
+            db.getObject(tempUsername, (reply2) => 
+            {
+                if (reply2 != null && reply2.id == reply1.userID)
+                {
+                    let retVal = 
+                    {
+                        'status' : 'success',
+                        'data' : 
+                        {
+                               'id' : reply2.id,
+                               'username' : tempUsername
+                        }
+                    }   
+                
+                    res.send(JSON.stringify(retVal));
+                    return;
+                }
+                else
+                {
+                    let retVal = 
+                    {
+                        'status' : 'fail',
+                        'reason' : 'Failed to validate username/session/token'
+                    }               
+                    res.send(JSON.stringify(retVal));
+                    return;
+                }
+            });
         }
-    }
-
-    //if (!authenticateUser(id, tempSessionID, tempSessionToken))
-    //{
-    //    console.log("***********************")
-    //    console.log("Failing to authenticate with username: " + tempUsername);
-    //    console.log("Active Sessions: " + sessions.length);
-//
-    //    let retVal = 
-    //    {
-    //        'status' : 'fail',
-    //        'reason' : 'Failed to validate username/session/token'
-    //    }   
-    //
-    //    res.send(JSON.stringify(retVal));
-    //    return;
-    //}
-
-    for (let i = 0; i < users.length; i++)
-    {
-        if (users[i].username == tempUsername)
+        else
         {
             let retVal = 
             {
-                'status' : 'success',
-                'data' : 
-                {
-                       'id' : users[i].id,
-                       'username' : users[i].username
-                }
+                'status' : 'fail',
+                'reason' : { 'id' : "Forbidden" }
             }   
-        
             res.send(JSON.stringify(retVal));
             return;
         }
-    }
+    });
 }
 
 function updateUser(req, res, next) 
@@ -264,55 +296,90 @@ function updateUser(req, res, next)
     let tempSessionID = req.body._session || req.query._session || req.params._session;
     let tempSessionToken = req.body._token || req.query._token || req.params._token;
 
-    if (!authenticateUser(tempID, tempSessionID, tempSessionToken))
+    // Access the session, get the token, the userID back
+    db.getObject(tempSessionID, (sessionReply) => 
     {
-        let retVal = 
+        // Authenticate session with user id
+        if (sessionReply != null && sessionReply.id == tempID)
         {
-            'status' : 'fail',
-            'reason' : { 'id' : "Forbidden" }
-        }   
-    
-        res.send(JSON.stringify(retVal));
-        return;
-    }
+            // Get new password/avatar information
+            let oldPass = req.body.oldPassword || req.query.oldPassword || req.params.oldPassword;
+            let newPass = req.body.newPassword || req.query.newPassword || req.params.newPassword;
+            let newAvatar = req.body.avatar || req.query.avatar || req.params.avatar;
+            let retVal = { 'status' : 'success', 'data' : {} };
 
-    let oldPass = req.body.oldPassword || req.query.oldPassword || req.params.oldPassword;
-    let newPass = req.body.newPassword || req.query.newPassword || req.params.newPassword;
-    let newAvatar = req.body.avatar || req.query.avatar || req.params.avatar;
-    let retVal = { 'status' : 'success', 'data' : {} };
-
-    for (let i = 0; i < users.length; i++)
-    {
-        if (tempID == users[i].id)
-        {
-            if (oldPass != undefined && newPass != undefined)
+            // Get the user object with their id
+            db.getObject(tempID, (userReply) => 
             {
-                if (oldPass == users[i].password)
+                // If an old password was passed in AND a new password was passed in
+                if (oldPass != undefined && newPass != undefined)
                 {
-                    users[i].password = newPass;
-                    retVal.data.passwordChanged = true;
+                    // Validate the old password with the user object
+                    if (oldPass == userReply.password)
+                    {
+                        // Set the new password on the temporary user object that was returned
+                        userReply.password = newPass;
+
+                        // If they also passed in an avatar, set it
+                        if (newAvatar != undefined)
+                        {
+                            userReply.avatar = newAvatar;
+                            retVal.data.avatar = newAvatar;
+                        }
+
+                        // Store the object to update the redis entry
+                        db.storeObject(userReply.id, userReply, (reply) => 
+                        {
+                            retVal.data.passwordChanged = true;
+
+                            res.send(JSON.stringify(retVal));
+                            return;    
+                        });
+                    }
+                    else
+                    {
+                        // Password didn't validate, so user is forbidden
+                        let failRetVal = 
+                        {
+                            'status' : 'fail',
+                            'reason' : { 'oldPassword' : "Forbidden" }
+                        }   
+                        res.send(JSON.stringify(failRetVal));
+                        return;
+                    }
                 }
                 else
                 {
-                    let failRetVal = 
+                    // They didn't pass a new password, but they did pass a new avatar
+                    if (newAvatar != undefined)
                     {
-                        'status' : 'fail',
-                        'reason' : { 'oldPassword' : "Forbidden" }
-                    }   
-                    res.send(JSON.stringify(failRetVal));
-                    return;
+                        userReply.avatar = newAvatar;
+                        retVal.data.avatar = newAvatar;
+                        
+                        // Store the object to update the redis entry
+                        db.storeObject(userReply.id, userReply, (reply) => 
+                        {
+                            retVal.data.passwordChanged = false;
+                            res.send(JSON.stringify(retVal));    
+                        });
+                    }
                 }
-            }
-
-            if (newAvatar != undefined)
-            {
-                users[i].avatar = newAvatar;
-                retVal.data.avatar = newAvatar;
-            }
+                res.send(JSON.stringify(retVal)); 
+            });
         }
-    }
-
-    res.send(JSON.stringify(retVal));    
+        else
+        {
+            // ID didn't validate so user is forbidden
+            let retVal = 
+            {
+                'status' : 'fail',
+                'reason' : { 'id' : "Forbidden" }
+            }   
+        
+            res.send(JSON.stringify(retVal));
+            return;
+        }
+    });
 }
 
 

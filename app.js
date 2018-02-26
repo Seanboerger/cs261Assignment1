@@ -1,8 +1,10 @@
+
 var express = require('express');   // express server
 var app = express();                // init express
 const bodyParser = require('body-parser');
 app.use(bodyParser.json())
 
+let db =  require('./utils/dbmanager');
 let users = require('./routes/route_user.js'); // user route
 
 // defines the root route f5or the server end api
@@ -16,5 +18,10 @@ app.get(apiRoot, function(req, res)
 	res.send('Hello world!');	
 });
 
-let server = app.listen(8123);
-console.log("listening");
+db.connect(function()
+{
+	app.listen(8123);
+	console.log("listening");
+});
+
+//let server = app.listen(8123);
