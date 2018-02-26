@@ -29,7 +29,7 @@ function createUser(req, res, next)
                 'status' : 'fail',
                 'reason' : 
                 {
-                       'username' : 'Already taken',
+                       'username' : 'Already taken'
                 }
             }   
         
@@ -134,7 +134,7 @@ function loginUser(req, res, next)
                     let retVal = 
                     {
                         'status' : 'fail',
-                        'reason' : 'Username/password mismatch',
+                        'reason' : 'Username/password mismatch'
                     }   
                 
                     res.send(JSON.stringify(retVal));
@@ -146,7 +146,7 @@ function loginUser(req, res, next)
             let retVal = 
             {
                 'status' : 'fail',
-                'reason' : 'Username/password mismatch',
+                'reason' : 'Username/password mismatch'
             }   
         
             res.send(JSON.stringify(retVal));
