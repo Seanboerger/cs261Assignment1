@@ -113,7 +113,6 @@ function loginUser(req, res, next)
                     {
                         console.log("Created session for user ID: " + reply.id + '\n');
                         console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
-                        console.log("Active Sessions: " + sessions.length);
         
                         let retVal = 
                         {
@@ -152,31 +151,6 @@ function loginUser(req, res, next)
             res.send(JSON.stringify(retVal));
         }
     });
-}
-
-function authenticateUser(userID, sessionID, sessionToken)
-{
-    console.log("\nAttempting to authenticate");
-    console.log("User ID: " + userID);
-    console.log("Session ID: " + sessionID);
-    console.log("Session Token: " + sessionToken);
-    console.log("From " + sessions.length + " Total Sessions");
-
-    for (let i = 0; i < sessions.length; i++)
-    {
-        if (sessions[i].userID == userID)
-        {
-            console.log("Found User ID! ID: " + userID + " with Session ID: " + sessions[i].sessionID);
-            
-            if (sessions[i].sessionID == sessionID && sessions[i].sessionToken == sessionToken)
-            {
-                console.log("Authentication Successful!");
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 function getUser(req, res, next) 
