@@ -179,7 +179,7 @@ function getUser(req, res, next)
     db.getObject(tempSessionID, (replySession) => 
     {
         // If the session exists, and the userID is correct, and the token is correct, continue
-        if (replySession != null && tempID == replySession.userID && replySession.sessionToken == tempSessionToken)
+        if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
             // Get the user object from the user ID
             db.getObject(reply.userID, (reply) => 
@@ -244,7 +244,7 @@ function findUser(req, res, next)
             // Access the user id by the username
             db.getObject(tempUsername, (reply2) => 
             {
-                if (reply2 != null && reply2.id == reply1.userID)
+                if (reply2 != null)
                 {
                     let retVal = 
                     {
@@ -294,7 +294,7 @@ function updateUser(req, res, next)
     db.getObject(tempSessionID, (sessionReply) => 
     {
         // Authenticate session with user id
-        if (sessionReply != null && sessionReply.id == tempID)
+        if (sessionReply != null)
         {
             // Get new password/avatar information
             let oldPass = req.body.oldPassword || req.query.oldPassword || req.params.oldPassword;
