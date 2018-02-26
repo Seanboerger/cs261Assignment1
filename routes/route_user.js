@@ -320,7 +320,7 @@ function updateUser(req, res, next)
                         db.storeObject(userReply.id, tempuser, (reply) => 
                         {
                             retVal.data.passwordChanged = true;
-                            res.send(JSON.stringify(retVal));
+                            //res.send(JSON.stringify(retVal));
                         });
                     }
                     else
