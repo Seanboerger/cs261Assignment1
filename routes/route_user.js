@@ -1,6 +1,16 @@
 let db =  require('../utils/dbmanager');
 
-let id = 0;
+function makeid(length) 
+{
+    let text = "";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+    for (let i = 0; i < length; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
+}
+
 
 // creating a user account
 function createUser(req, res, next) 
@@ -44,9 +54,8 @@ function createUser(req, res, next)
         }
 
         let newUser = {};
-        let thisID = id;
-        id += 1;
-        let idObj = { 'id': id };
+        let thisID = makeid(5);
+        let idObj = { 'id': thisID };
 
         newUser.username = tempUsername;
         newUser.id = idObj.id;
@@ -83,17 +92,6 @@ function createUser(req, res, next)
             });
         });
     });
-}
-
-function makeid(length) 
-{
-    let text = "";
-    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
-    for (let i = 0; i < length; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
-    return text;
 }
 
 // login user route
@@ -183,9 +181,8 @@ function getUser(req, res, next)
         // If the session exists, and the userID is correct, and the token is correct, continue
         if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
-            let fix = replySession.userID + 1;
             // Get the user object from the user ID
-            db.getObject(fix, (reply) => 
+            db.getObject(replySession.userID, (reply) => 
             {
                 if (reply != null)
                 {
