@@ -68,7 +68,7 @@ function createUser(req, res, next)
         //////////////////////
         // Redis Push new User
         //////////////////////
-        db.storeObject(newUser.id, newUser, (reply) => 
+        db.storeObject(idObj.id, newUser, (reply) => 
         {
             
             db.storeObject(newUser.username, idObj, (reply) => 
@@ -182,7 +182,7 @@ function getUser(req, res, next)
         if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
             // Get the user object from the user ID
-            db.getObject(replySession.userID, (reply) => 
+            db.getObject(tempID, (reply) => 
             {
                 if (reply != null)
                 {
@@ -344,8 +344,10 @@ function updateUser(req, res, next)
                         userReply.avatar = newAvatar;
                         retVal.data.avatar = newAvatar;
                         
+                        let tempuser = userReply;
+
                         // Store the object to update the redis entry
-                        db.storeObject(userReply.id, userReply, (reply) => 
+                        db.storeObject(userReply.id, tempuser, (reply) => 
                         {
                             retVal.data.passwordChanged = false;
                             res.send(JSON.stringify(retVal));    
