@@ -115,14 +115,14 @@ function loginUser(req, res, next)
                     let sessionID = makeid(5);
 
                     let newSession = {};
-                    newSession.userID = replyUser.id;
+                    newSession.userID = replyID.id;
                     newSession.sessionID = sessionID;
                     newSession.sessionToken = sessionToken;
                     
                     db.storeObject(sessionID, newSession, (replySession) => 
                     {
                         console.log("Login: Success");
-                        console.log("Created session for user ID: " + replyUser.id + '\n');
+                        console.log("Created session for user ID: " + replyID.id + '\n');
                         console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
 
                         let retVal = 
@@ -130,7 +130,7 @@ function loginUser(req, res, next)
                             'status' : 'success',
                             'data' : 
                             {
-                                   'id' : replyUser.id,
+                                   'id' : replyID.id,
                                    'session' : sessionID,
                                    'token' : sessionToken
                             }
@@ -199,7 +199,6 @@ function getUser(req, res, next)
                 
                     console.log("Get User: Success");
                     res.send(JSON.stringify(retVal));
-                    return;
                 }
                 else
                 {
@@ -209,7 +208,6 @@ function getUser(req, res, next)
                         'reason' : 'User does not exist'
                     }       
                     res.send(JSON.stringify(retVal));
-                    return;
                 }
             });
         }
@@ -224,7 +222,6 @@ function getUser(req, res, next)
             console.log("User ID Passed: " + tempID);
             console.log("User ID Found for this session: " + replySession.userID);
             res.send(JSON.stringify(retVal));
-            return;
         }
     });
 }
@@ -257,7 +254,6 @@ function findUser(req, res, next)
                     }   
                 
                     res.send(JSON.stringify(retVal));
-                    return;
                 }
                 else
                 {
@@ -267,7 +263,6 @@ function findUser(req, res, next)
                         'reason' : 'Failed to validate username/session/token'
                     }               
                     res.send(JSON.stringify(retVal));
-                    return;
                 }
             });
         }
@@ -279,7 +274,6 @@ function findUser(req, res, next)
                 'reason' : { 'id' : "Forbidden" }
             }   
             res.send(JSON.stringify(retVal));
-            return;
         }
     });
 }
@@ -321,13 +315,13 @@ function updateUser(req, res, next)
                             retVal.data.avatar = newAvatar;
                         }
 
+                        let tempuser = userReply;
                         // Store the object to update the redis entry
-                        db.storeObject(userReply.id, userReply, (reply) => 
+                        db.storeObject(userReply.id, tempuser, (reply) => 
                         {
                             retVal.data.passwordChanged = true;
 
                             res.send(JSON.stringify(retVal));
-                            return;    
                         });
                     }
                     else
