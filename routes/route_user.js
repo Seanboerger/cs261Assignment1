@@ -352,9 +352,8 @@ function updateUser(req, res, next)
                             res.send(JSON.stringify(retVal));    
                         });
                     }
-                    return;
+                    res.send(JSON.stringify(retVal)); 
                 }
-                res.send(JSON.stringify(retVal)); 
             });
         }
         else
