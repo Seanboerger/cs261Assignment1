@@ -183,9 +183,9 @@ function getUser(req, res, next)
         // If the session exists, and the userID is correct, and the token is correct, continue
         if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
-            //let fix = replySession.userID + 1;
+            let fix = replySession.userID + 1;
             // Get the user object from the user ID
-            db.getObject(replySession.userID, (reply) => 
+            db.getObject(fix, (reply) => 
             {
                 if (reply != null)
                 {
@@ -374,7 +374,6 @@ function updateUser(req, res, next)
             }   
         
             res.send(JSON.stringify(retVal));
-            return;
         }
     });
 }
