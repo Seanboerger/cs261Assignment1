@@ -44,10 +44,12 @@ function createUser(req, res, next)
         }
 
         let newUser = {};
+        let thisID = id;
+        id += 1;
+        let idObj = { 'id': id };
 
         newUser.username = tempUsername;
-        newUser.id = id;
-        id += 1;
+        newUser.id = idObj.id;
         newUser.password = tempPassword;
         if (tempAvatar == undefined)
             newUser.avatar = "default image";
@@ -59,7 +61,7 @@ function createUser(req, res, next)
         //////////////////////
         db.storeObject(newUser.id, newUser, (reply) => 
         {
-            let idObj = { 'id': newUser.id };
+            
             db.storeObject(newUser.username, idObj, (reply) => 
             {
                 let retVal = 
@@ -67,13 +69,13 @@ function createUser(req, res, next)
                     'status' : 'success',
                     'data' : 
                     {
-                           'id' : newUser.id,
+                           'id' : idObj.id,
                            'username' : tempUsername
                     }
                 }   
             
                 console.log("Create User: Success");
-                console.log("id is " + newUser.id);
+                console.log("id is " + idObj.id);
                 console.log("username is " + tempUsername);
                 console.log(JSON.stringify(retVal))
             
@@ -181,6 +183,7 @@ function getUser(req, res, next)
         // If the session exists, and the userID is correct, and the token is correct, continue
         if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
+            //let fix = replySession.userID + 1;
             // Get the user object from the user ID
             db.getObject(replySession.userID, (reply) => 
             {
