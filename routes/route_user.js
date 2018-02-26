@@ -9,6 +9,9 @@ function createUser(req, res, next)
     let tempPassword = req.body.password || req.query.password || req.params.password;
     let tempAvatar = req.body.avatar || req.query.avatar || req.params.avatar;
 
+    console.log("**********************************************\n");
+    console.log("Try: Create User");
+
     if (tempUsername == undefined || tempPassword == undefined)
     {
         let retVal = 
@@ -33,6 +36,9 @@ function createUser(req, res, next)
                 }
             }   
         
+            console.log("Create user: Fail");
+            console.log("Name already taken");
+
             res.send(JSON.stringify(retVal));
             return;
         }
@@ -66,6 +72,7 @@ function createUser(req, res, next)
                     }
                 }   
             
+                console.log("Create User: Success");
                 console.log("id is " + newUser.id);
                 console.log("username is " + tempUsername);
                 console.log(JSON.stringify(retVal))
@@ -93,33 +100,37 @@ function loginUser(req, res, next)
     let tempUsername = req.body.username || req.query.username || req.params.username;
     let tempPassword = req.body.password || req.query.password || req.params.password;
 
-    db.getObject(tempUsername, (reply) => 
+    console.log("**********************************************\n");
+    console.log("Try: Login");
+
+    db.getObject(tempUsername, (replyID) => 
     {
-        if (reply != null)
+        if (replyID != null)
         {
-            db.getObject(reply.id, (reply) => 
+            db.getObject(replyID.id, (replyUser) => 
             {
-                if (reply.password == tempPassword)
+                if (replyUser.password == tempPassword)
                 {
                     let sessionToken = makeid(10);
                     let sessionID = makeid(5);
 
                     let newSession = {};
-                    newSession.userID = reply.id;
+                    newSession.userID = replyUser.id;
                     newSession.sessionID = sessionID;
                     newSession.sessionToken = sessionToken;
                     
-                    db.storeObject(sessionID, newSession, (reply) => 
+                    db.storeObject(sessionID, newSession, (replySession) => 
                     {
-                        console.log("Created session for user ID: " + reply.id + '\n');
+                        console.log("Login: Success");
+                        console.log("Created session for user ID: " + replyUser.id + '\n');
                         console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
-        
+
                         let retVal = 
                         {
                             'status' : 'success',
                             'data' : 
                             {
-                                   'id' : reply.id,
+                                   'id' : replyUser.id,
                                    'session' : sessionID,
                                    'token' : sessionToken
                             }
@@ -135,7 +146,7 @@ function loginUser(req, res, next)
                         'status' : 'fail',
                         'reason' : 'Username/password mismatch'
                     }   
-                
+                    console.log("Login: Fail");
                     res.send(JSON.stringify(retVal));
                 }
             });
@@ -148,6 +159,8 @@ function loginUser(req, res, next)
                 'reason' : 'Username/password mismatch'
             }   
         
+            console.log("Login: Fail");
+            
             res.send(JSON.stringify(retVal));
         }
     });
@@ -159,11 +172,14 @@ function getUser(req, res, next)
     let tempSessionID = req.body._session || req.query._session || req.params._session;
     let tempSessionToken = req.body._token || req.query._token || req.params._token;
 
+    console.log("**********************************************\n");
+    console.log("Try: Get User");
+
     // Access the session, get the token, the userID back
-    db.getObject(tempSessionID, (reply) => 
+    db.getObject(tempSessionID, (replySession) => 
     {
         // If the session exists, and the userID is correct, and the token is correct, continue
-        if (reply != null && tempID == reply.userID && reply.sessionToken == tempSessionToken)
+        if (replySession != null && tempID == replySession.userID && replySession.sessionToken == tempSessionToken)
         {
             // Get the user object from the user ID
             db.getObject(reply.userID, (reply) => 
@@ -181,6 +197,7 @@ function getUser(req, res, next)
                         }
                     }   
                 
+                    console.log("Get User: Success");
                     res.send(JSON.stringify(retVal));
                     return;
                 }
@@ -203,6 +220,9 @@ function getUser(req, res, next)
                 'status' : 'fail',
                 'reason' : 'Failed to validate id/session/token'
             }       
+            console.log("Get User: Fail");
+            console.log("User ID Passed: " + tempID);
+            console.log("User ID Found for this session: " + replySession.userID);
             res.send(JSON.stringify(retVal));
             return;
         }
