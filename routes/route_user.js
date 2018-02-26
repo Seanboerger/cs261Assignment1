@@ -355,7 +355,7 @@ function updateUser(req, res, next)
                         });
                     }
                 }
-                //res.send(JSON.stringify(retVal)); 
+                res.send(JSON.stringify(retVal)); 
                 return;
             });
         }
@@ -368,7 +368,7 @@ function updateUser(req, res, next)
                 'reason' : { 'id' : "Forbidden" }
             }   
         
-            res.send(JSON.stringify(retVal));
+            res.end();//send(JSON.stringify(retVal));
             return;
         }
     });
