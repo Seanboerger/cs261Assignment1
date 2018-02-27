@@ -70,7 +70,6 @@ function createUser(req, res, next)
         //////////////////////
         db.storeObject(idObj.id, newUser, (reply) => 
         {
-            
             db.storeObject(newUser.username, idObj, (reply) => 
             {
                 let retVal = 
