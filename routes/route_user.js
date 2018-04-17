@@ -118,6 +118,14 @@ function loginUser(req, res, next)
     {
         console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result.length);
 
+        console.log("Passed in password hash = " + GeneratePasswordHash(result.salt, tempPassword));
+        console.log("SQL Password hash       = " + result.passwordhash);
+        if (result.passwordhash == GeneratePasswordHash(result.salt, tempPassword))
+            console.log("Password Hashes Match = SUCCESS");
+        else
+            console.log("Password Hashes Match = FAIL");
+            
+
         if (result.length > 0 && result.passwordhash == GeneratePasswordHash(result.salt, tempPassword))
         {
             let sessionToken = makeid(10);
