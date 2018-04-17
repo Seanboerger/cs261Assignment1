@@ -78,11 +78,12 @@ function createUser(req, res, next)
         let salt = GetSalt();
         let passHash = GeneratePasswordHash(newUser.password, salt);
 
+        let insertQuery = "INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?";
+        let insertValues = [[newUser.id, newUser.username, passHash, salt, newUser.avatar]];
         //////////////////////
         // MySql Push new User
         //////////////////////
-        db.GetMySql().query('INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?', 
-        [newUser.id, newUser.username, passHash, salt, newUser.avatar], (error, result) => 
+        db.GetMySql().query(insertQuery, [insertValues], (error, result) => 
         {
             let retVal = 
             {

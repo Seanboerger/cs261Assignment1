@@ -6,7 +6,8 @@ let cache = null;
 let sqlConnection = mysql.createConnection({
     host: 'ip-172-31-19-141.us-west-2.compute.internal',
     user: 'cs261-app',
-    password: 'password'
+    password: 'password',
+    database: 'massteroids'
    });
 
 module.exports.GetMySql = () => { return sqlConnection; }
