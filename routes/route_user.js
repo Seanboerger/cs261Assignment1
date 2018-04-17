@@ -79,7 +79,7 @@ function createUser(req, res, next)
         let passHash = GeneratePasswordHash(newUser.password, salt);
 
         let insertQuery = "INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?";
-        let insertValues = [[newUser.id, newUser.username, passHash, salt, newUser.avatar]];
+        let insertValues = [newUser.id, newUser.username, passHash, salt, newUser.avatar];
         //////////////////////
         // MySql Push new User
         //////////////////////
