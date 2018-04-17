@@ -9,7 +9,7 @@ let sqlConnection = mysql.createConnection({
     password: 'password'
    });
 
-module.exports.sqlConnection = sqlConnection;
+module.exports.GetMySql = () => { return sqlConnection; }
 
 module.exports.connect = function (callback)
 {

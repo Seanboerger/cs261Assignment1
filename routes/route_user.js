@@ -43,7 +43,7 @@ function createUser(req, res, next)
         return;
     }
 
-    db.sqlConnection.query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
+    db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
     {
         if (result.length > 0)
         {
@@ -81,7 +81,7 @@ function createUser(req, res, next)
         //////////////////////
         // MySql Push new User
         //////////////////////
-        db.sqlConnection.query('INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?', 
+        db.GetMySql().query('INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?', 
         [newUser.id, newUser.username, passHash, salt, newUser.avatar], (error, result) => 
         {
             let retVal = 
@@ -113,7 +113,7 @@ function loginUser(req, res, next)
     console.log("**********************************************\n");
     console.log("Try: Login");
 
-    db.sqlConnection.query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
+    db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
     {
         if (result.length > 0 && result.passwordhash == GeneratePasswordHash(result.salt, tempPassword))
         {
@@ -176,7 +176,7 @@ function getUser(req, res, next)
         if (replySession != null && replySession.sessionToken == tempSessionToken)
         {
             // Get the user object from the user ID
-            db.sqlConnection.query('SELECT * FROM `user` WHERE id = ?', [tempID], (error, result) => 
+            db.GetMySql().query('SELECT * FROM `user` WHERE id = ?', [tempID], (error, result) => 
             {
                 if (result.length > 0)
                 {
@@ -232,7 +232,7 @@ function findUser(req, res, next)
             if (reply1 != null && reply1.sessionToken == tempSessionToken)
             {
                 // Access the user id by the username
-                db.sqlConnection.query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) =>  
+                db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) =>  
                 {
                     if (result.length > 0)
                     {
@@ -289,7 +289,7 @@ function updateUser(req, res, next)
             let retVal = { 'status' : 'success', 'data' : {} };
             
             // Get the user object with their id
-            db.sqlConnection.query('SELECT * FROM `user` WHERE id = ?', [tempID], (error, result) =>
+            db.GetMySql().query('SELECT * FROM `user` WHERE id = ?', [tempID], (error, result) =>
             {
                 // If an old password was passed in AND a new password was passed in
                 if (oldPass != undefined && newPass != undefined)
@@ -309,7 +309,7 @@ function updateUser(req, res, next)
                         }
                     
                         // Store the object to update the redis entry
-                        db.sqlConnection.query('UPDATE user SET password=?, avatar_url=? WHERE id = ?', [updatePass, updateAvatar, tempID], (error, result) =>
+                        db.GetMySql().query('UPDATE user SET password=?, avatar_url=? WHERE id = ?', [updatePass, updateAvatar, tempID], (error, result) =>
                         {
                             retVal.data.passwordChanged = true;
                             res.send(JSON.stringify(retVal));
@@ -336,7 +336,7 @@ function updateUser(req, res, next)
                         retVal.data.avatar = newAvatar;
 
                         // Store the object to update the redis entry
-                        db.sqlConnection.query('UPDATE user SET avatar_url=? WHERE id = ?', [updateAvatar, tempID], (error, result) =>
+                        db.GetMySql().query('UPDATE user SET avatar_url=? WHERE id = ?', [updateAvatar, tempID], (error, result) =>
                         {
                             retVal.data.passwordChanged = false;
                             res.send(JSON.stringify(retVal));    
