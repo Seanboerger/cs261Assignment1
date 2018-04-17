@@ -306,7 +306,7 @@ function updateUser(req, res, next)
                 if (oldPass != undefined && newPass != undefined)
                 {
                     // Validate the old password with the user object
-                    if (GeneratePasswordHash(oldPass, result[0].result) == result[0].passwordhash)
+                    if (GeneratePasswordHash(oldPass, result[0].salt) == result[0].passwordhash)
                     {
                         // Set the new password on the temporary user object that was returned
                         let updatePass = GeneratePasswordHash(newPass, result[0].salt);
