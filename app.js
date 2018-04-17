@@ -1,11 +1,8 @@
-import { sqlConnect } from './utils/dbmanager';
-
+let db =  require('./utils/dbmanager');
 var express = require('express');   // express server
 var app = express();                // init express
 const bodyParser = require('body-parser');
 app.use(bodyParser.json())
-
-let db =  require('./utils/dbmanager');
 
 let users = require('./routes/route_user.js'); // user route
 
@@ -23,13 +20,10 @@ app.get(apiRoot, function(req, res)
 	res.send('Hello world!');
 });
 
-sqlConnect(function()
+db.connect(function()
 {
-	db.connect(function()
-	{
-		app.listen(8123);
-		console.log("listening");
-	});
+	app.listen(8123);
+	console.log("listening");
 });
 
 //let server = app.listen(8123);

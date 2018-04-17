@@ -1,4 +1,4 @@
-let db =  require('../utils/dbmanager');
+let db = require('../utils/dbmanager');
 let crypto = require('crypto');
 
 function makeid(length) 
