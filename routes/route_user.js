@@ -81,7 +81,7 @@ function createUser(req, res, next)
         //////////////////////
         // MySql Push new User
         //////////////////////
-        db.sqlConnection.query('INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES = ?', 
+        db.sqlConnection.query('INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?', 
         [newUser.id, newUser.username, passHash, salt, newUser.avatar], (error, result) => 
         {
             let retVal = 
@@ -214,7 +214,6 @@ function getUser(req, res, next)
             }       
             console.log("Get User: Fail");
             console.log("User ID Passed: " + tempID);
-            console.log("User ID Found for this session: " + replySession.userID);
             res.send(JSON.stringify(retVal));
         }
     });
