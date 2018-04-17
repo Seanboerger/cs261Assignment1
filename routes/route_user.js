@@ -116,18 +116,17 @@ function loginUser(req, res, next)
 
     db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
     {
-        console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result[0].length);
-        console.log("Stored Information from SQL: " + result[0].id + ", " + result[0].username + ", " + result[0].passwordhash + ", " + result[0].salt  + ", " + result[0].avatar_url);
-
-        console.log("Passed in password hash = " + GeneratePasswordHash(tempPassword, result[0].salt));
-        console.log("SQL Password hash       = " + result[0].passwordhash);
-        if (result[0].passwordhash == GeneratePasswordHash(result[0].salt, tempPassword))
-            console.log("Password Hashes Match = SUCCESS");
-        else
-            console.log("Password Hashes Match = FAILURE");
+        //console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result[0].length);
+        //console.log("Stored Information from SQL: " + result[0].id + ", " + result[0].username + ", " + result[0].passwordhash + ", " + result[0].salt  + ", " + result[0].avatar_url);
+//
+        //console.log("Passed in password hash = " + GeneratePasswordHash(tempPassword, result[0].salt));
+        //console.log("SQL Password hash       = " + result[0].passwordhash);
+        //if (result[0].passwordhash == GeneratePasswordHash(result[0].salt, tempPassword))
+        //    console.log("Password Hashes Match = SUCCESS");
+        //else
+        //    console.log("Password Hashes Match = FAILURE");
             
-
-        if (result.length > 0 && result[0].passwordhash == GeneratePasswordHash(tempPassword, result[0].salt))
+        if (result && result.length > 0 && result[0].passwordhash == GeneratePasswordHash(tempPassword, result[0].salt))
         {
             let sessionToken = makeid(10);
             let sessionID = makeid(5);
