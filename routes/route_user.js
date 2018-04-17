@@ -114,14 +114,14 @@ function loginUser(req, res, next)
     console.log("\n**********************************************");
     console.log("Try: Login");
 
-    db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
+    db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result, fields) => 
     {
         console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result.length);
-        console.log("Stored Information from SQL: " + result.id + ", " + result.username + ", " + result.passwordhash + ", " + result.salt  + ", " + result.avatar_url);
+        console.log("Stored Information from SQL: " + fields.id + ", " + fields.username + ", " + fields.passwordhash + ", " + fields.salt  + ", " + fields.avatar_url);
 
-        console.log("Passed in password hash = " + GeneratePasswordHash(result.salt, tempPassword));
-        console.log("SQL Password hash       = " + result.passwordhash);
-        if (result.passwordhash == GeneratePasswordHash(result.salt, tempPassword))
+        console.log("Passed in password hash = " + GeneratePasswordHash(fields.salt, tempPassword));
+        console.log("SQL Password hash       = " + fields.passwordhash);
+        if (fields.passwordhash == GeneratePasswordHash(fields.salt, tempPassword))
             console.log("Password Hashes Match = SUCCESS");
         else
             console.log("Password Hashes Match = FAILURE");
