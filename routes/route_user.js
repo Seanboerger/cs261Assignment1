@@ -79,7 +79,7 @@ function createUser(req, res, next)
         let passHash = GeneratePasswordHash(newUser.password, salt);
 
         let insertQuery = "INSERT INTO user (id, username, passwordhash, salt, avatar_url) VALUES ?";
-        let insertValues = [newUser.id, newUser.username, passHash, salt, newUser.avatar];
+        let insertValues = [[newUser.id, newUser.username, passHash, salt, newUser.avatar]];
         //////////////////////
         // MySql Push new User
         //////////////////////
@@ -117,7 +117,7 @@ function loginUser(req, res, next)
     db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
     {
         console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result.length);
-        console.log("Stored Information: " + result);
+        console.log("Stored Information from SQL: " + result.id + ", " + result.username + ", " + result.passwordhash + ", " + result.salt  + ", " + result.avatar_url);
 
         console.log("Passed in password hash = " + GeneratePasswordHash(result.salt, tempPassword));
         console.log("SQL Password hash       = " + result.passwordhash);
