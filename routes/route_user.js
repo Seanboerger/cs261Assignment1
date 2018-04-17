@@ -19,7 +19,7 @@ function GetSalt()
 
 function GeneratePasswordHash(password, salt)
 {
-    crypto.createHash('sha512').update(salt + password, 'utf8').digest('hex');
+    return crypto.createHash('sha512').update(salt + password, 'utf8').digest('hex');
 }
 
 // creating a user account
