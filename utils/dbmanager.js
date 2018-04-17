@@ -1,8 +1,10 @@
 let redis = require('redis');
-var mysql = require('mysql'),
-	crypto = require('crypto');
+let mysql = require('mysql');
+let crypto = require('crypto');
 let cache = null;
-var sqlConnection = null;
+let sqlConnection = null;
+
+module.exports.sqlConnection = sqlConnection;
 
 module.exports.sqlConnect = function (callback)
 {
@@ -17,8 +19,6 @@ module.exports.sqlConnect = function (callback)
 
     callback();
 }
-
-module.exports.sql = sqlConnection;
 
 module.exports.connect = function (callback)
 {
