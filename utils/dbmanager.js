@@ -2,23 +2,13 @@ let redis = require('redis');
 let mysql = require('mysql');
 let crypto = require('crypto');
 let cache = null;
-let sqlConnection = null;
+let sqlConnection = mysql.createConnection({
+    host: 'ip-172-31-19-141.us-west-2.compute.internal',
+    user: 'cs261-app',
+    password: 'password'
+   });
 
 module.exports.sqlConnection = sqlConnection;
-
-module.exports.sqlConnect = function (callback)
-{
-    sqlConnection = mysql.createConnection({
-        host: 'ip-172-31-19-141.us-west-2.compute.internal',
-        user: 'cs261-app',
-        password: 'password'
-       });
-    
-    sqlConnection.connect();
-    sqlConnection.query('USE massteroids');
-
-    callback();
-}
 
 module.exports.connect = function (callback)
 {

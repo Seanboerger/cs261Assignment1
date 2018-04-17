@@ -15,6 +15,9 @@ let apiRoot = "/api/v1/";
 // calls register function in route_user.js to register the other URL routes
 users.register(app, apiRoot + "users/");
 
+db.sqlConnection.connect();
+db.sqlConnection.query('USE massteroids');
+
 app.get(apiRoot, function(req, res)
 {
 	res.send('Hello world!');
