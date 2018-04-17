@@ -124,14 +124,14 @@ function loginUser(req, res, next)
             let sessionID = makeid(5);
 
             let newSession = {};
-            newSession.userID = replyID.id;
+            newSession.userID = result.id;
             newSession.sessionID = sessionID;
             newSession.sessionToken = sessionToken;
             
             db.storeObject(sessionID, newSession, (replySession) => 
             {
                 console.log("Login: Success");
-                console.log("Created session for user ID: " + replyID.id + '\n');
+                console.log("Created session for user ID: " + result.id + '\n');
                 console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
 
                 let retVal = 
@@ -139,7 +139,7 @@ function loginUser(req, res, next)
                     'status' : 'success',
                     'data' : 
                     {
-                           'id' : replyID.id,
+                           'id' : result.id,
                            'session' : sessionID,
                            'token' : sessionToken
                     }
