@@ -198,7 +198,7 @@ function getUser(req, res, next)
                         {
                                'id' : result[0].id,
                                'username' : result[0].username,
-                               'avatar' : result[0].avatar
+                               'avatar' : result[0].avatar_url
                         }
                     }   
                 
@@ -306,10 +306,10 @@ function updateUser(req, res, next)
                 if (oldPass != undefined && newPass != undefined)
                 {
                     // Validate the old password with the user object
-                    if (oldPass == result[0].password)
+                    if (GeneratePasswordHash(oldPass, result[0].result) == result[0].passwordhash)
                     {
                         // Set the new password on the temporary user object that was returned
-                        let updatePass = newPass;
+                        let updatePass = GeneratePasswordHash(newPass, result[0].salt);
                         let updateAvatar = result[0].avatar_url;
 
                         // If they also passed in an avatar, set it
@@ -320,7 +320,7 @@ function updateUser(req, res, next)
                         }
                     
                         // Store the object to update the redis entry
-                        db.GetMySql().query('UPDATE user SET password=?, avatar_url=? WHERE id = ?', [updatePass, updateAvatar, tempID], (error, result2) =>
+                        db.GetMySql().query('UPDATE user SET passwordhash=?, avatar_url=? WHERE id = ?', [updatePass, updateAvatar, tempID], (error, result2) =>
                         {
                             retVal.data.passwordChanged = true;
                             res.send(JSON.stringify(retVal));
