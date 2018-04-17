@@ -114,20 +114,20 @@ function loginUser(req, res, next)
     console.log("\n**********************************************");
     console.log("Try: Login");
 
-    db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result, fields) => 
+    db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
     {
-        console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result.length);
-        console.log("Stored Information from SQL: " + fields.id + ", " + fields.username + ", " + fields.passwordhash + ", " + fields.salt  + ", " + fields.avatar_url);
+        console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result[0].length);
+        console.log("Stored Information from SQL: " + result[0].id + ", " + result[0].username + ", " + result[0].passwordhash + ", " + result[0].salt  + ", " + result[0].avatar_url);
 
-        console.log("Passed in password hash = " + GeneratePasswordHash(fields.salt, tempPassword));
-        console.log("SQL Password hash       = " + fields.passwordhash);
-        if (fields.passwordhash == GeneratePasswordHash(fields.salt, tempPassword))
+        console.log("Passed in password hash = " + GeneratePasswordHash(result[0].salt, tempPassword));
+        console.log("SQL Password hash       = " + result[0].passwordhash);
+        if (result[0].passwordhash == GeneratePasswordHash(result[0].salt, tempPassword))
             console.log("Password Hashes Match = SUCCESS");
         else
             console.log("Password Hashes Match = FAILURE");
             
 
-        if (result.length > 0 && result.passwordhash == GeneratePasswordHash(result.salt, tempPassword))
+        if (result.length > 0 && result[0].passwordhash == GeneratePasswordHash(result[0].salt, tempPassword))
         {
             let sessionToken = makeid(10);
             let sessionID = makeid(5);
@@ -140,7 +140,7 @@ function loginUser(req, res, next)
             db.storeObject(sessionID, newSession, (replySession) => 
             {
                 console.log("Login: Success");
-                console.log("Created session for user ID: " + result.id + '\n');
+                console.log("Created session for user ID: " + result[0].id + '\n');
                 console.log("Session and Token ID: " + sessionID + ", " + sessionToken + '\n');
 
                 let retVal = 
@@ -148,7 +148,7 @@ function loginUser(req, res, next)
                     'status' : 'success',
                     'data' : 
                     {
-                           'id' : result.id,
+                           'id' : result[0].id,
                            'session' : sessionID,
                            'token' : sessionToken
                     }
