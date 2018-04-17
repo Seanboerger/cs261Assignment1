@@ -196,9 +196,9 @@ function getUser(req, res, next)
                         'status' : 'success',
                         'data' : 
                         {
-                               'id' : result.id,
-                               'username' : result.username,
-                               'avatar' : result.avatar
+                               'id' : result[0].id,
+                               'username' : result[0].username,
+                               'avatar' : result[0].avatar
                         }
                     }   
                 
@@ -252,7 +252,7 @@ function findUser(req, res, next)
                             'status' : 'success',
                             'data' : 
                             {
-                                   'id' : result.id,
+                                   'id' : result[0].id,
                                    'username' : tempUsername
                             }
                         }   
@@ -306,11 +306,11 @@ function updateUser(req, res, next)
                 if (oldPass != undefined && newPass != undefined)
                 {
                     // Validate the old password with the user object
-                    if (oldPass == result.password)
+                    if (oldPass == result[0].password)
                     {
                         // Set the new password on the temporary user object that was returned
                         let updatePass = newPass;
-                        let updateAvatar = result.avatar_url;
+                        let updateAvatar = result[0].avatar_url;
 
                         // If they also passed in an avatar, set it
                         if (newAvatar != undefined)
@@ -320,7 +320,7 @@ function updateUser(req, res, next)
                         }
                     
                         // Store the object to update the redis entry
-                        db.GetMySql().query('UPDATE user SET password=?, avatar_url=? WHERE id = ?', [updatePass, updateAvatar, tempID], (error, result) =>
+                        db.GetMySql().query('UPDATE user SET password=?, avatar_url=? WHERE id = ?', [updatePass, updateAvatar, tempID], (error, result2) =>
                         {
                             retVal.data.passwordChanged = true;
                             res.send(JSON.stringify(retVal));
@@ -347,7 +347,7 @@ function updateUser(req, res, next)
                         retVal.data.avatar = newAvatar;
 
                         // Store the object to update the redis entry
-                        db.GetMySql().query('UPDATE user SET avatar_url=? WHERE id = ?', [updateAvatar, tempID], (error, result) =>
+                        db.GetMySql().query('UPDATE user SET avatar_url=? WHERE id = ?', [updateAvatar, tempID], (error, result2) =>
                         {
                             retVal.data.passwordChanged = false;
                             res.send(JSON.stringify(retVal));    
