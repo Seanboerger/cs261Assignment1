@@ -111,11 +111,13 @@ function loginUser(req, res, next)
     let tempUsername = req.body.username || req.query.username || req.params.username;
     let tempPassword = req.body.password || req.query.password || req.params.password;
 
-    console.log("**********************************************\n");
+    console.log("\n**********************************************");
     console.log("Try: Login");
 
     db.GetMySql().query('SELECT * FROM `user` WHERE username = ?', [tempUsername], (error, result) => 
     {
+        console.log("Length of SQL query with username, password: " + tempUsername + ", " + tempPassword + " = " + result.length);
+
         if (result.length > 0 && result.passwordhash == GeneratePasswordHash(result.salt, tempPassword))
         {
             let sessionToken = makeid(10);
